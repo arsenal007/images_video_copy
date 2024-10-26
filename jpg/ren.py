@@ -3,78 +3,13 @@ import datetime
 import shutil
 import sys
 import filecmp
-import time
-import json
-from PIL import Image
-import re
 
-class CreationTimeExtractor:
-    def get_creation_time(self, file):
-        """
-        Повертає час створення файлу або None, якщо час не може бути визначено.
-        """
-        raise NotImplementedError("Повинно бути реалізовано в підкласі")
+from modification_time_extractor import ModificationTimeExtractor
+from json_time_extractor import JsonTimeExtractor
+from exif_time_extractor import ExifTimeExtractor
+from file_name_time_extractor import FileNameTimeExtractor
 
-class ModificationTimeExtractor(CreationTimeExtractor):
-    def get_creation_time(self, file):
-        try:
-            s = time.ctime(os.path.getmtime(file))
-            return datetime.datetime.strptime(s, "%a %b %d %H:%M:%S %Y")
-        except Exception as e:
-            print(f"Error getting modification time for file {file}: {e}")
-            return None
 
-class JsonTimeExtractor(CreationTimeExtractor):
-    def get_creation_time(self, file):
-        json_extension = ".json"
-        json_file = file + json_extension
-        try:
-            if os.path.exists(json_file):
-                with open(json_file, 'r') as f:
-                    data = json.load(f)
-                    if "photoTakenTime" in data and "formatted" in data["photoTakenTime"]:
-                        time_str = data["photoTakenTime"]["formatted"]
-                        time_str = re.sub(r'[^\x00-\x7F]', '', time_str).strip()
-                        return datetime.datetime.strptime(time_str, "%b %d, %Y, %I:%M:%S%p %Z")
-                    elif "creationTime" in data and "formatted" in data["creationTime"]:
-                        time_str = data["creationTime"]["formatted"]
-                        time_str = re.sub(r'[^\x00-\x7F]', '', time_str).strip()
-                        return datetime.datetime.strptime(time_str, "%b %d, %Y, %I:%M:%S%p %Z")
-        except (FileNotFoundError, json.JSONDecodeError, KeyError, ValueError) as e:
-            print(f"Error parsing JSON for file {json_file}: {e}")
-        return None
-
-class ExifTimeExtractor(CreationTimeExtractor):
-    def get_creation_time(self, file):
-        try:
-            img_file = Image.open(file)
-            exif_data = img_file._getexif()
-            if exif_data:
-                mtime = "9999:99:99 99:99:99"
-                if 306 in exif_data and exif_data[306] < mtime:
-                    mtime = exif_data[306]
-                if 36867 in exif_data and exif_data[36867] < mtime:
-                    mtime = exif_data[36867]
-                if 36868 in exif_data and exif_data[36868] < mtime:
-                    mtime = exif_data[36868]
-                if mtime != "9999:99:99 99:99:99":
-                    return datetime.datetime.strptime(mtime, "%Y:%m:%d %H:%M:%S")
-            img_file.close()
-        except (OSError, AttributeError, TypeError, ValueError) as e:
-            print(f"Error extracting EXIF time for file {file}: {e}")
-        return None
-
-class FileNameTimeExtractor(CreationTimeExtractor):
-    def __init__(self, formats):
-        self.formats = formats
-
-    def get_creation_time(self, file):
-        for format_str in self.formats:
-            try:
-                return datetime.datetime.strptime(file, format_str)
-            except ValueError:
-                continue
-        return None
 
 class FileRenamer:
     def __init__(self, dir_out="D:/photos/"):
