@@ -1,7 +1,7 @@
 
 import datetime
 
-from creation_time_extractor import CreationTimeExtractor
+from jpg.creation_time_extractor import CreationTimeExtractor
 
 class FileNameTimeExtractor(CreationTimeExtractor):
     def __init__(self, formats):

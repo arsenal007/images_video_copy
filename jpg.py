@@ -24,8 +24,7 @@ DIR_OUT = "F:\\photos\\"
 
 
 
-extensions = ["jpg", "JPG", "mp4", "MP4", "3gp", "MOV", "3GP", "avi", "wmv",
-              "WMV", "jpeg", "JPEG", "MOD", "mov", "tiff", "TIFF", "NEF", "png", "gif", "GIF", "AVI","MPG","mpg"]
+
 
 
 def get_minimum_creation_time(exif_data):
@@ -128,20 +127,22 @@ def fix(name):
     base, ext = os.path.splitext(name)
     return base + ext.lower()
 
-renamer = FileRenamer(dir_out=DIR_OUT)
+supported_extensions = ["jpg", "JPG", "mp4", "MP4", "3gp", "MOV", "3GP", "avi", "wmv",
+              "WMV", "jpeg", "JPEG", "MOD", "mov", "tiff", "TIFF", "NEF", "png", "gif", "GIF", "AVI","MPG","mpg"]
 
-if __name__ == "__main__":
+def process_files_rename(input_directory, output_directory, extensions):
     fse = sys.getfilesystemencoding()
     for ext in extensions:
-        list = getListOfFiles(DIR_IN, ext)
+        list = getListOfFiles(input_directory, ext)
         for file in list:
+            renamer = FileRenamer(output_directory)
             head, teil = os.path.split(file)
             move_to = fix(teil)
             file_encoded = file.encode(fse)
             move_to_encoded = move_to.encode(fse)
             print(file_encoded, move_to_encoded, sep=' -> ',
                   end=' [', file=sys.stdout, flush=False)
-            json_extension = ".json".encode("utf-8")
+            json_extension = ".json".encode(fse)
             json_file = file_encoded + json_extension
             if os.path.exists(json_file):
                 new_json_file = move_to_encoded + json_extension
@@ -149,6 +150,9 @@ if __name__ == "__main__":
 
             shutil.move(file_encoded, move_to_encoded)
             new_ext = get_ext(move_to_encoded)
-            renamer.ren(move_to_encoded, new_ext.decode("utf-8"))
-    clean(DIR_IN)
+            renamer.ren(move_to_encoded, new_ext.decode(fse))
+    clean(input_directory)
+
+if __name__ == "__main__":
+    process_files_rename( DIR_IN,DIR_OUT, supported_extensions)
     #input("Press Enter to continue...")
