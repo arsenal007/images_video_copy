@@ -4,7 +4,7 @@ import json
 import datetime
 import re 
 
-from creation_time_extractor import CreationTimeExtractor
+from jpg.creation_time_extractor import CreationTimeExtractor
 
 class JsonTimeExtractor(CreationTimeExtractor):
     def get_creation_time(self, file):

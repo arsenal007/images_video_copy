@@ -154,5 +154,6 @@ def process_files_rename(input_directory, output_directory, extensions):
     clean(input_directory)
 
 if __name__ == "__main__":
+    
     process_files_rename( DIR_IN,DIR_OUT, supported_extensions)
     #input("Press Enter to continue...")
