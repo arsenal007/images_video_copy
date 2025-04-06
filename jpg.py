@@ -15,10 +15,9 @@ from jpg.ren import FileRenamer
 
 
 
-# Вхідні та вихідні директорії
-DIR_IN = "F:\\1\\2"
-DIR_OUT = "F:\\photos\\"
-#os.path.join("E:", "photos", "2023-01", "2023-01-01_12.00.00_Sunday_2.jpg")
+
+DIR_IN = "E:\\work\\"
+DIR_OUT = "E:\\photos\\"
 
 
 

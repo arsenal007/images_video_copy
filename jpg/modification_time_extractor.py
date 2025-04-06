@@ -2,7 +2,7 @@ import datetime
 import time
 import os
 
-from creation_time_extractor import CreationTimeExtractor
+from jpg.creation_time_extractor import CreationTimeExtractor
 
 class ModificationTimeExtractor(CreationTimeExtractor):
     def get_creation_time(self, file):
