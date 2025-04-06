@@ -24,40 +24,6 @@ DIR_OUT = "E:\\photos\\"
 
 
 
-
-
-def get_minimum_creation_time(exif_data):
-    mtime = "?"
-    if 306 in exif_data and exif_data[306] < mtime:  # 306 = DateTime
-        mtime = exif_data[306]
-    # 36867 = DateTimeOriginal
-    if 36867 in exif_data and exif_data[36867] < mtime:
-        mtime = exif_data[36867]
-    # 36868 = DateTimeDigitized
-    if 36868 in exif_data and exif_data[36868] < mtime:
-        mtime = exif_data[36868]
-    return mtime
-
-
-def min(x, y):
-    if x > y:
-        return y
-    elif x < y:
-        return x
-    elif x == y:
-        return x
-
-
-def min3(x, y, z):
-    return min(min(x, y), z)
-
-
-def exif(file):
-    #dict = piexif.load(file)
-    #l = len(dict)
-    return (True)
-
-
 def get_ext(name):
     base, ext = os.path.splitext(name)
     return ext[1:]
