@@ -21,9 +21,6 @@ DIR_OUT = "E:\\photos\\"
 
 
 
-
-
-
 def get_ext(name):
     base, ext = os.path.splitext(name)
     return ext[1:]

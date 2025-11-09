@@ -27,23 +27,23 @@ class FileRenamer:
         ]
 
     def ren(self, file, ext):
-        # Декодуємо назву файлу перед передачею в екстрактори
+        # Decode the file name before passing it to the extractors
         file_str = os.fsdecode(file) if isinstance(file, bytes) else file
         available_times = []
 
-        # Використовуємо всі екстрактори для отримання часу створення файлу
+        # Using all extractors to obtain the file creation time
         for extractor in self.extractors:
             time_value = extractor.get_creation_time(file_str)
             if time_value:
                 available_times.append(time_value)
 
-        # Переконайтеся, що ми маємо хоча б одну часову мітку
+        # Make sure we have at least one timestamp
         if not available_times:
-            raise ValueError("Не знайдено жодної доступної часової мітки для файлу")
+            raise ValueError("No available timestamp found for the file")
 
-        # Знаходимо найраніший час і використовуємо його для перейменування
+        # Find the earliest time and use it for renaming
         new_time = min(available_times)
-        self.__rename(new_time, file, ext)  # Передаємо оригінальний байтовий шлях
+        self.__rename(new_time, file, ext)  # Pass the original byte path
 
     def __rename(self, new_time, file, ext):
         y = datetime.datetime.strftime(new_time, "%Y")
@@ -56,7 +56,7 @@ class FileRenamer:
         head, tail = os.path.splitext(basename)
         dst_file = os.path.join(output_dir, os.fsencode(basename))
 
-        # Додаємо індексацію, якщо файл вже існує
+        # Add indexing if the file already exists
         count = 0
         while os.path.exists(dst_file) and not filecmp.cmp(file, dst_file):
             count += 1

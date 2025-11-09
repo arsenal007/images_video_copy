@@ -17,7 +17,7 @@ class TestRenFunction(unittest.TestCase):
     def test_rename_with_json_date(self, mock_rename, mock_getmtime):
         renamer = FileRenamer(dir_out=self.BASE_DIR)
         
-        # Створюємо тимчасовий файл для тесту
+        # Creating a temporary file for the test
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
             test_file_path = temp_file.name
 
