@@ -13,13 +13,8 @@ import shutil
 from jpg.ren import FileRenamer
 
 
-
-
-
-DIR_IN = "E:\\work\\"
-DIR_OUT = "E:\\photos\\"
-
-
+DIR_IN = "Pictures/"
+DIR_OUT = "photos/"
 
 def get_ext(name):
     base, ext = os.path.splitext(name)

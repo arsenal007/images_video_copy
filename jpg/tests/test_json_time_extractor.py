@@ -8,9 +8,9 @@ class TestJsonTimeExtractor(unittest.TestCase):
     def setUp(self):
         self.extractor = JsonTimeExtractor()
 
+    @patch("jpg.json_time_extractor.os.remove")
     @patch("jpg.json_time_extractor.os.path.exists")
-    @patch("jpg.json_time_extractor.open", new_callable=mock_open)
-    def test_valid_photo_taken_time(self, mock_open, mock_exists):
+    def test_valid_photo_taken_time(self, mock_exists, mock_remove):
         # Mock os.path.exists to return True
         mock_exists.return_value = True
         # Sample JSON data with a valid "photoTakenTime" field
@@ -19,15 +19,14 @@ class TestJsonTimeExtractor(unittest.TestCase):
                 "formatted": "Oct 20, 2023, 05:45:30PM UTC"
             }
         })
-        mock_open.return_value.read.return_value = json_data
+        with patch("builtins.open", mock_open(read_data=json_data)):
+            # Expected datetime object
+            expected_date = datetime(2023, 10, 20, 17, 45, 30)
+            self.assertEqual(self.extractor.get_creation_time("test_file"), expected_date)
 
-        # Expected datetime object
-        expected_date = datetime(2023, 10, 20, 17, 45, 30)
-        self.assertEqual(self.extractor.get_creation_time("test_file"), expected_date)
-
+    @patch("jpg.json_time_extractor.os.remove")
     @patch("jpg.json_time_extractor.os.path.exists")
-    @patch("jpg.json_time_extractor.open", new_callable=mock_open)
-    def test_valid_creation_time(self, mock_open, mock_exists):
+    def test_valid_creation_time(self, mock_exists, mock_remove):
         # Mock os.path.exists to return True
         mock_exists.return_value = True
         # Sample JSON data with a valid "creationTime" field
@@ -36,11 +35,10 @@ class TestJsonTimeExtractor(unittest.TestCase):
                 "formatted": "Sep 15, 2023, 08:30:15AM UTC"
             }
         })
-        mock_open.return_value.read.return_value = json_data
-
-        # Expected datetime object
-        expected_date = datetime(2023, 9, 15, 8, 30, 15)
-        self.assertEqual(self.extractor.get_creation_time("test_file"), expected_date)
+        with patch("builtins.open", mock_open(read_data=json_data)):
+            # Expected datetime object
+            expected_date = datetime(2023, 9, 15, 8, 30, 15)
+            self.assertEqual(self.extractor.get_creation_time("test_file"), expected_date)
 
     @patch("jpg.json_time_extractor.os.path.exists")
     @patch("jpg.json_time_extractor.open", new_callable=mock_open)
